@@ -1,3 +1,15 @@
+# Create3Factory
+
+Simple factory that can deploy contract with Create3 method from Solmate. Authority contract from Solmate is added on top of this contract, to controle who can use this factory.
+
+## Why
+
+- It aims to be the central point of deployment for all contracts for a DAO. 
+
+- DAO can authorize someone else to deploy contracts on their behalf for example to a EOA-deployer, in order to acvhive cross-chain replication. 
+
+
+
 ## Foundry
 
 **Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
