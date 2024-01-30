@@ -7,6 +7,7 @@ import "../src/Create3Factory.sol";
 
 import {RolesAuthority} from "solmate/auth/authorities/RolesAuthority.sol";
 
+import {Foo} from "./helpers/Foo.sol";
 import {Counter} from "./helpers/Counter.sol";
 import {Create2} from "./helpers/Create2.sol";
 
@@ -80,5 +81,40 @@ contract Create3FactoryTest is Test {
         assertNotEq(counterChain1.code.length, 0, "Create3Factory should have a valid code");
         assertEq(counterChain2, counterChain1, "Counter should be deployed at the same address on both chains");
         assertNotEq(countChain1, countChain2, "Counter should be deployed with different count on both chains");
+    }
+
+    /// @notice Test deploying contract on 2 differents chain, with two different constructor arguments with the same user
+    /// and when a contract are not deployed in the same order on both chains.
+    function test_DeployWithFactory_WhenAContractIsDeployedBefore() public {
+        bytes32 salt1 = keccak256("Counter");
+        bytes32 salt2 = keccak256("Dummy");
+
+        address predicted = create3Factory.getDeployed(salt1);
+
+        vm.startPrank(DAO_MULTISIG);
+        vm.selectFork(chain1);
+        address counterChain1 =
+            create3Factory.deploy(salt1, abi.encodePacked(type(Counter).creationCode, abi.encode(123)));
+        uint256 countChain1 = Counter(counterChain1).count();
+        address foo1 = create3Factory.deploy(salt2, abi.encodePacked(type(Foo).creationCode));
+        vm.stopPrank();
+
+        vm.startPrank(dummy);
+        vm.selectFork(chain2);
+        address foo2 = create3Factory.deploy(salt2, abi.encodePacked(type(Foo).creationCode));
+        address counterChain2 =
+            create3Factory.deploy(salt1, abi.encodePacked(type(Counter).creationCode, abi.encode(456)));
+        uint256 countChain2 = Counter(counterChain1).count();
+        vm.stopPrank();
+
+        // Assertions
+        assertEq(predicted, counterChain1, "Counter should be deployed at the predicted address");
+        assertNotEq(counterChain1, address(0), "Create3Factory should have a valid address");
+        assertNotEq(counterChain1.code.length, 0, "Create3Factory should have a valid code");
+        assertEq(counterChain2, counterChain1, "Counter should be deployed at the same address on both chains");
+        assertNotEq(countChain1, countChain2, "Counter should be deployed with different count on both chains");
+        assertEq(foo1, foo2, "Foo should be deployed at the same address on both chains");
+        assertNotEq(foo1, address(0), "Create3Factory should have a valid address");
+        assertNotEq(foo1.code.length, 0, "Create3Factory should have a valid code");
     }
 }

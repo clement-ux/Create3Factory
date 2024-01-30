@@ -24,3 +24,4 @@ contract Create3Factory is Auth {
         return CREATE3.getDeployed(salt);
     }
 }
+
