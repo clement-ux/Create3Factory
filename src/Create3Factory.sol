@@ -12,7 +12,7 @@ import {Authority} from "solmate/auth/Auth.sol";
 ///         DAO can authorize someone else to deploy contracts on their behalf for example to a EOA-deployer, in order to acvhive cross-chain replication.
 /// @dev This contract need to be deployed with create2, in order to be achive cross-chain replication easly.
 contract Create3Factory is Auth {
-    address public constant DAO_MULTISIG = address(0xBABE); // This address is just an example, it should be replaced by the DAO multisig address
+    address public constant DAO_MULTISIG = 0x0123456789012345678901234567890123456789; // This address is just an example, it should be replaced by the DAO multisig address
 
     constructor() Auth(DAO_MULTISIG, Authority(address(0))) {}
 
@@ -24,4 +24,3 @@ contract Create3Factory is Auth {
         return CREATE3.getDeployed(salt);
     }
 }
-

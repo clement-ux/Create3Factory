@@ -12,7 +12,7 @@ import {Counter} from "./helpers/Counter.sol";
 import {Create2} from "./helpers/Create2.sol";
 
 contract Create3FactoryTest is Test {
-    address public constant DAO_MULTISIG = address(0xBABE);
+    address public constant DAO_MULTISIG = 0x0123456789012345678901234567890123456789;
     address public immutable AUTHORITY = makeAddr("authority");
 
     Create3Factory public create3Factory;
